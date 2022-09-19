@@ -1,6 +1,6 @@
 #from mal import *
 import requests
-import mal_scraper 
+import mal_scraper
 
 
 users_20 =  mal_scraper.discover_users()
