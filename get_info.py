@@ -70,20 +70,20 @@ def get_info(link):
     result.append(year)
     result.append(score)
     if studio[0].text != 'add some':
-        text = ""
+        text = "n/a"
         for each in studio:
             text = text + each.text + " "
         result.append(text)
     else:
-        result.append(" ")
+        result.append("n/a")
     if source != '':
         result.append(source)
     else:
-        result.append(" ")
+        result.append("n/a")
     if demographic != '':
         result.append(demographic)
     else:
-        result.append(" ")
+        result.append("n/a")
     text = ""
     for each in genres:
         text = text + each.text + " "
