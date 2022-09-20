@@ -11,7 +11,7 @@ def get_show(link):
     this_season = soup.find('div', class_ = 'seasonal-anime-list js-seasonal-anime-list js-seasonal-anime-list-key-1')
     shows = this_season.find_all('a', class_ = 'link-title')
 
-    output_filename = 'show_links.csv'
+    output_filename = 'show_links 1990 - 2017.csv'
     with open(output_filename, 'a', encoding='utf-8') as file_object:
         for each in shows:
             file_object.write(each.get('href') + '\n')
@@ -20,7 +20,7 @@ def get_show(link):
 def main():
 
     seasons = ['winter', 'spring', 'summer', 'fall']
-    for year in range(2021, 2022):
+    for year in range(1990, 2017):
         for season in seasons:
             link = 'https://myanimelist.net/anime/season/' + str(year) + '/' + season
             get_show(link)

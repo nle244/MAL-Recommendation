@@ -4,6 +4,10 @@ from lxml import etree
 import requests
 import time
 from datetime import datetime
+import re
+import csv
+
+# link = 'https://myanimelist.net/anime/1/Cowboy_Bebop'
 
 
 def get_info(link):
@@ -14,7 +18,7 @@ def get_info(link):
 
     # Title
     title = soup.find('h1', class_ = "title-name h1_bold_none").text.replace(',','')
-
+    
     # Score
     try:
         score = soup.find('span', itemprop = "ratingValue").text
@@ -39,39 +43,71 @@ def get_info(link):
         demographic = soup.find('span', text = "Demographic:").find_next_sibling().text
     except:
         demographic = ''
+
+    #find the id
+    i = 30
+    id = ""
+    while(link[i] != '/'):
+        id += link[i]
+        i += 1
+
+    #find release year
+    years = soup.find('span', text = "Aired:").next_sibling
+    num = re.findall(r'\d+', years)
+    num = [int(i) for i in num]
+    for i in num:
+        if i < 1900:
+            num.remove(i)
+    year = min(num)
     
-    # Actors
+    #find actors
     actors = soup.find_all(class_ ="va-t ar pl4 pr4")
+    
 
     # Build the result
+    result.append(id)
     result.append(title)
+    result.append(year)
     result.append(score)
     if studio[0].text != 'add some':
+        text = ""
         for each in studio:
-            result.append(each.text)
+            text = text + each.text + " "
+        result.append(text)
+    else:
+        result.append(" ")
     if source != '':
         result.append(source)
+    else:
+        result.append(" ")
     if demographic != '':
         result.append(demographic)
+    else:
+        result.append(" ")
+    text = ""
     for each in genres:
-        result.append(each.text)
+        text = text + each.text + " "
+    result.append(text)
+    text = ""
     for each in actors:
-        result.append(each.text.replace('Japanese','').replace(',','').strip('\n'))
+        text = text + each.text.replace('Japanese','').replace(',','').strip('\n') + " "
+    result.append(text)
+
     
-    # Remove stop words and punctuation before appending to show info
-    stopWords = ['the', 'a', 'of', 'and', 'to', 'in', 'that', 
-                'is', 'for', 'be', 'an', 'no', 'wo', 'ni', 'ga', ',']
-    punc = '''!()-[]{};:'"\,<>./?@#$%^&*_~'''
-    titleWords = title.lower()
-    for ele in titleWords:
-        if ele in punc:
-            titleWords = titleWords.replace(ele,'')
-    titleWords = titleWords.split()
-    for each in stopWords:
-        if (each in titleWords):
-            titleWords.remove(each)
-    for each in titleWords:
-        result.append(each)
+    # # Remove stop words and punctuation before appending to show info
+    # stopWords = ['the', 'a', 'of', 'and', 'to', 'in', 'that', 
+    #             'is', 'for', 'be', 'an', 'no', 'wo', 'ni', 'ga', ',']
+    # punc = '''!()-[]{};:'"\,<>./?@#$%^&*_~'''
+    # titleWords = title.lower()
+    # for ele in titleWords:
+    #     if ele in punc:
+    #         titleWords = titleWords.replace(ele,'')
+    # titleWords = titleWords.split()
+    # for each in stopWords:
+    #     if (each in titleWords):
+    #         titleWords.remove(each)
+    # for each in titleWords:
+    #     result.append(each)
     
     #print(result)
     return result
@@ -80,11 +116,11 @@ def get_info(link):
 def main():
     startTime = datetime.now()
     links = []
-    with open('anime_2012_2019.csv', 'r', encoding='utf-8') as reader:
+    with open('show_links_2017_2021.csv', 'r', encoding='utf-8') as reader:
         for line in reader.readlines():
             links.append((line.strip('\n')))
 
-    with open('training.csv', 'a', encoding='utf-8') as writer:
+    with open('test_set.csv', 'a', encoding='utf-8') as writer:
         for link in links:
             output = get_info(link)
             writer.write(str(output).strip('[]')+'\n')
@@ -96,3 +132,11 @@ def main():
 
 if __name__=="__main__":
     main()
+
+
+# with open('temp.csv', 'a', encoding='utf-8') as f:
+#         writer = csv.writer(f)
+#         for val in output:
+#             writer.writerow(val)
+
+# # print(years)
