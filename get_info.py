@@ -70,7 +70,7 @@ def get_info(link):
     result.append(year)
     result.append(score)
     if studio[0].text != 'add some':
-        text = "n/a"
+        text = ""
         for each in studio:
             text = text + each.text + " "
         result.append(text)
@@ -116,11 +116,11 @@ def get_info(link):
 def main():
     startTime = datetime.now()
     links = []
-    with open('show_links_2017_2021.csv', 'r', encoding='utf-8') as reader:
+    with open('show_links_1990_2017.csv', 'r', encoding='utf-8') as reader:
         for line in reader.readlines():
             links.append((line.strip('\n')))
 
-    with open('test_set.csv', 'a', encoding='utf-8') as writer:
+    with open('train_set.csv', 'a', encoding='utf-8') as writer:
         for link in links:
             output = get_info(link)
             writer.write(str(output).strip('[]')+'\n')
